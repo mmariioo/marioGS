@@ -1,18 +1,21 @@
-# Usa una imagen ligera de Node
-FROM node:18-alpine
+FROM python:3.12-slim
 
-# Crea el directorio de trabajo
+# Evitar archivos .pyc y buffering de stdout/stderr
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Copia los archivos de dependencias y las instala
-COPY package*.json ./
-RUN npm install
+# Copiar solo requirements primero (aprovecha caché de capas Docker)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el resto del código
+# Copiar el resto del código
 COPY . .
 
-# Expone el puerto que usa tu app
+# Crear carpeta de datos para la BD SQLite
+RUN mkdir -p /app/data
+
 EXPOSE 3000
 
-# Comando para arrancar la app
-CMD ["node", "app.js"]
+CMD ["python", "app.py"]
