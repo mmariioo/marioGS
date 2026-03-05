@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NEXUS | Tech Store</title>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' 'unsafe-inline';
+                   style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net;
+                   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
+                   img-src 'self' https: data:;
+                   connect-src 'self' http://localhost:3000;
+                   frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="no-referrer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav id="main-nav">
+    <div class="nav-inner">
+        <div class="brand" onclick="goHome()">
+            <span class="brand-icon"><i class="bi bi-hexagon-fill"></i></span>
+            <span class="brand-name">NEXUS</span>
+        </div>
+        <ul id="nav-links"></ul>
+    </div>
+</nav>
+
+<main>
+
+<!-- ══ AUTH ══════════════════════════════════════════════════ -->
+<section id="auth-section">
+    <div class="auth-bg-grid"></div>
+    <div class="auth-container">
+        <div class="auth-headline">
+            <span class="auth-tag">Acceso exclusivo</span>
+            <h1>Tu setup<br><em>de élite</em><br>te espera.</h1>
+            <p>Tecnología premium curada para desarrolladores exigentes. Cada cuenta incluye <strong>3.000 € de saldo</strong> para empezar.</p>
+        </div>
+        <div class="auth-forms">
+            <div class="tab-switcher">
+                <button class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+                <button class="tab-btn" onclick="switchTab('register')">Registrarse</button>
+                <div class="tab-indicator" id="tab-indicator"></div>
+            </div>
+
+            <form id="login-form" autocomplete="on" novalidate>
+                <div class="field-group">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" id="login-email" name="email"
+                           placeholder="Correo electrónico" maxlength="254"
+                           required autocomplete="email">
+                </div>
+                <div class="field-group">
+                    <i class="bi bi-lock"></i>
+                    <input type="password" id="login-password" name="password"
+                           placeholder="Contraseña" minlength="8" maxlength="72"
+                           required autocomplete="current-password">
+                </div>
+                <small id="login-error" class="error-text" role="alert" style="display:none"></small>
+                <button type="submit" class="btn-primary full-width" id="login-btn">
+                    <span>Entrar</span> <i class="bi bi-arrow-right"></i>
+                </button>
+                <p class="auth-switch-hint">¿No tienes cuenta?
+                    <button type="button" class="link-btn" onclick="switchTab('register')">Regístrate aquí</button>
+                </p>
+            </form>
+
+            <form id="register-form" autocomplete="on" novalidate style="display:none">
+                <div class="field-group">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" id="reg-email" name="email"
+                           placeholder="Correo electrónico" maxlength="254"
+                           required autocomplete="email">
+                </div>
+                <div class="field-group">
+                    <i class="bi bi-lock"></i>
+                    <input type="password" id="reg-password" name="new-password"
+                           placeholder="Contraseña (8–16 caracteres)"
+                           minlength="8" maxlength="16"
+                           required autocomplete="new-password">
+                    <button type="button" class="toggle-pass"
+                            onclick="togglePassword('reg-password', this)" title="Ver contraseña" tabindex="-1">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="pass-strength" id="pass-strength">
+                    <div class="pass-strength-bar" id="pass-strength-bar"></div>
+                    <span id="pass-strength-label"></span>
+                </div>
+                <div class="field-group">
+                    <i class="bi bi-shield-check"></i>
+                    <input type="password" id="reg-confirm" name="confirm-password"
+                           placeholder="Confirmar contraseña"
+                           minlength="8" maxlength="16"
+                           required autocomplete="new-password">
+                </div>
+                <small id="reg-error" class="error-text" role="alert" style="display:none"></small>
+                <button type="submit" class="btn-primary full-width" id="reg-btn">
+                    <span>Crear cuenta</span> <i class="bi bi-person-plus"></i>
+                </button>
+                <p class="auth-switch-hint">¿Ya tienes cuenta?
+                    <button type="button" class="link-btn" onclick="switchTab('login')">Inicia sesión</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ══ CATÁLOGO ══════════════════════════════════════════════ -->
+<section id="catalog-section" style="display:none">
+    <div class="catalog-hero">
+        <div class="hero-label"><span class="dot"></span> Colección actual</div>
+        <h2>Catálogo <span class="accent">Premium</span></h2>
+        <p>Equipamiento de alto rendimiento para mentes de alto rendimiento.</p>
+    </div>
+    <div id="products-container"></div>
+</section>
+
+<!-- ══ CARRITO ═══════════════════════════════════════════════ -->
+<section id="cart-section" style="display:none">
+    <div class="section-header">
+        <h2><i class="bi bi-bag-check"></i> Tu Carrito</h2>
+        <p>Revisa tu selección antes de finalizar.</p>
+    </div>
+    <div class="cart-layout">
+        <div class="cart-items-wrapper">
+            <div id="cart-items"></div>
+        </div>
+        <div class="cart-summary-card">
+            <h3>Resumen del pedido</h3>
+            <div class="summary-row"><span>Subtotal</span><span id="cart-subtotal">0.00 €</span></div>
+            <div class="summary-row"><span>Envío</span><span class="accent">Gratis</span></div>
+            <hr class="divider">
+            <div class="summary-row total-row"><span>Total</span><span id="cart-total">0.00 €</span></div>
+            <hr class="divider">
+            <div class="summary-row saldo-row">
+                <span><i class="bi bi-wallet2"></i> Tu saldo</span>
+                <span id="cart-saldo-display">0.00 €</span>
+            </div>
+            <div id="saldo-warning" class="saldo-warning" style="display:none">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span id="saldo-warning-msg"></span>
+            </div>
+            <button id="checkout-btn" class="btn-primary full-width" onclick="checkout()" disabled>
+                <i class="bi bi-credit-card"></i> <span>Finalizar Compra</span>
+            </button>
+            <button class="btn-ghost full-width" style="margin-top:0.6rem"
+                    onclick="showSection('catalog-section')">
+                <i class="bi bi-arrow-left"></i> Seguir comprando
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ══ DASHBOARD ════════════════════════════════════════════ -->
+<section id="dashboard-section" style="display:none">
+    <div class="section-header">
+        <h2><i class="bi bi-person-workspace"></i> Mi Panel</h2>
+        <p>Gestiona tus productos y consulta tu actividad.</p>
+    </div>
+    <div class="dashboard-grid">
+        <div class="dash-card">
+            <div class="dash-card-header">
+                <i class="bi bi-plus-circle"></i>
+                <h3>Publicar Producto</h3>
+            </div>
+            <form id="create-product-form" novalidate>
+                <div class="field-group">
+                    <i class="bi bi-tag"></i>
+                    <input type="text" id="prod-name"
+                           placeholder="Nombre (máx. 120 caracteres)" maxlength="120" required>
+                </div>
+                <div class="field-group field-group-textarea">
+                    <i class="bi bi-text-left"></i>
+                    <textarea id="prod-desc"
+                              placeholder="Descripción (máx. 500 caracteres)..."
+                              maxlength="500" required rows="3"></textarea>
+                </div>
+                <div class="field-group">
+                    <i class="bi bi-currency-euro"></i>
+                    <input type="number" id="prod-price"
+                           placeholder="Precio (€)" step="0.01" min="0.01" max="999999" required>
+                </div>
+                <div class="field-group">
+                    <i class="bi bi-image"></i>
+                    <input type="url" id="prod-image"
+                           placeholder="URL imagen (https://...)" maxlength="500">
+                </div>
+                <small id="prod-error" class="error-text" role="alert" style="display:none"></small>
+                <button type="submit" class="btn-primary full-width" id="prod-btn">
+                    <i class="bi bi-cloud-arrow-up"></i> <span>Publicar en Catálogo</span>
+                </button>
+            </form>
+        </div>
+        <div>
+            <div class="dash-card" style="margin-bottom:1.5rem">
+                <div class="dash-card-header">
+                    <i class="bi bi-box-seam"></i>
+                    <h3>Mis Productos</h3>
+                </div>
+                <ul id="my-products-list" class="orders-list"></ul>
+            </div>
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <i class="bi bi-clock-history"></i>
+                    <h3>Mis Compras</h3>
+                </div>
+                <ul id="my-orders-list" class="orders-list"></ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite">
+    <i id="toast-icon"></i>
+    <span id="toast-msg"></span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
